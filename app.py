@@ -1,8 +1,100 @@
-from flask import Flask, render_template,request, redirect
+from flask import Flask, render_template, request, redirect, url_for, session
 from prediction_pipeline import preprocessing, vectorizer, get_prediction
 from logger import logging
+from pymongo import MongoClient
+import bcrypt
+import os
+from dotenv import load_dotenv
+
 
 app = Flask(__name__)
+
+
+load_dotenv()
+
+
+# MongoDB connection
+mongodbURI = os.getenv('MONGO_URI')
+
+try:
+    # Attempt to connect to MongoDB
+    client = MongoClient(mongodbURI, serverSelectionTimeoutMS=5000)  # 5-second timeout
+    # Check if the connection is successful
+    client.server_info()  # This raises an exception if the connection fails
+    print("MongoDB connected successfully.")
+except Exception as e:
+    print(f"Error connecting to MongoDB: {e}")
+
+db = client['user_data']
+collection = db['sentiment_analysis_project_admin_data']
+
+
+
+# Secret key for session
+app.secret_key = os.getenv('SESSION_SECRET_KEY')
+
+
+@app.route('/admin')
+def admin():
+    if 'username' in session:
+        return redirect(url_for('admin_dashboard'))
+    return render_template('admin_login.html')
+
+
+@app.route('/admin_login', methods=['GET', 'POST'])
+def admin_login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+
+        # Check if user exists in database
+        user = collection.find_one({'username': username})
+
+        if user:
+            # Check if password matches the hashed password
+            if bcrypt.checkpw(password.encode('utf-8'), user['password']):
+                session['username'] = username
+                return redirect(url_for('admin_dashboard'))
+            else:
+                return "Incorrect username or password"
+        else:
+            return "User does not exist"
+    
+    return render_template('admin_login.html')
+
+
+@app.route('/admin_dashboard')
+def admin_dashboard():
+    if 'username' in session:
+        return render_template('admin.html')
+    else:
+        return redirect(url_for('admin_login'))
+
+
+@app.route('/admin_logout')
+def admin_logout():
+    session.pop('username', None)
+    return redirect(url_for('admin_login'))
+
+
+@app.route('/admin_register', methods=['GET', 'POST'])
+def admin_register():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        hashed_pw = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+
+        # Check if username already exists
+        if collection.find_one({'username': username}):
+            return "Username already taken!"
+
+        # Insert user into MongoDB
+        collection.insert_one({'username': username, 'password': hashed_pw})
+        return redirect(url_for('admin_login'))
+
+    return render_template('admin_register.html')
+
+
 
 logging.info('Flask server started')
 
@@ -10,6 +102,7 @@ data = dict()
 reviews = []
 positive = 0
 negative = 0
+
 
 @app.route("/")
 def index():
@@ -20,6 +113,7 @@ def index():
     logging.info('========== Open home page ============')
 
     return render_template('index.html', data=data)
+
 
 @app.route("/", methods = ['post'])
 def my_post():
@@ -45,5 +139,11 @@ def my_post():
     reviews.insert(0, text)
     return redirect(request.url)
 
+
+
+
 if __name__ == "__main__":
     app.run()
+
+
+

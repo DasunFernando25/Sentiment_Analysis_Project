@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_dashboard.css') }}">
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>Admin Panel</h2>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a>Dashboard</a></li>
+            <li><a href="{{ url_for('index') }}">Home</a></li>
+            <li><a>About</a></li>
+            <li><a>Profile</a></li>
+            <li><a href="{{ url_for('admin_logout') }}">Logout</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content">
+        <header>
+            <h1>Welcome to the Admin Dashboard</h1>
+        </header>
+
+        <section class="stats">
+            <div class="card">
+                <h3>Total Reviews</h3>
+                <p>20</p>
+            </div>
+            <div class="card">
+                <h3>Positives</h3>
+                <p>15</p>
+            </div>
+            <div class="card">
+                <h3>Negatives</h3>
+                <p>5</p>
+            </div>
+        </section>
+
+        <section class="recent-activity">
+            <h2>Recent Activity</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Action</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>John Doe</td>
+                        <td>Created a new post</td>
+                        <td>Nov 21, 2024</td>
+                    </tr>
+                    <tr>
+                        <td>Jane Smith</td>
+                        <td>Updated profile</td>
+                        <td>Nov 20, 2024</td>
+                    </tr>
+                    <tr>
+                        <td>Mark Lee</td>
+                        <td>Deleted an item</td>
+                        <td>Nov 19, 2024</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </div>
+
+</body>
+</html>
+

@@ -9,6 +9,7 @@
 </head>
 <body>
 
+
     <div class="split left">
         <div class="centered">
             <img src="../static/products/prod1.jpg" alt="">
@@ -20,6 +21,7 @@
         <div class="container mt-5 mb-5">
             <div class="d-flex justify-content-center row">
                 <div class="d-flex flex-column col-md-8">
+                    <p><a href="{{ url_for('admin') }}">Admin</a></p>
                     <div>
                         <label for="">Positive Sentiments : {{ data.positive }}</label>
                     </div>
