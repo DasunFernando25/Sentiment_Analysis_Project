@@ -27,6 +27,7 @@ except Exception as e:
 
 db = client['user_data']
 collection = db['sentiment_analysis_project_admin_data']
+review_collection = db['sentiment_analysis_project_review_data']
 
 
 
@@ -66,7 +67,31 @@ def admin_login():
 @app.route('/admin_dashboard')
 def admin_dashboard():
     if 'username' in session:
-        return render_template('admin.html')
+
+        # Fetch all reviews from MongoDB
+        try:
+            reviews = list(review_collection.find())
+        except Exception as e:
+            logging.error(f"Error retrieving reviews: {e}")
+            reviews = []
+
+        # Calculate stats
+        try:
+            total_reviews = len(reviews)
+            positive_reviews = sum(1 for r in reviews if r.get("prediction") == "positive")
+            negative_reviews = sum(1 for r in reviews if r.get("prediction") == "negative")
+        except Exception as e:
+            logging.error(f"Error calculating stats: {e}")
+            total_reviews = 0
+            positive_reviews = 0
+            negative_reviews = 0
+
+        return render_template('admin.html', 
+                               reviews=reviews,
+                               total_reviews=total_reviews,
+                               positive_reviews=positive_reviews,
+                               negative_reviews=negative_reviews)
+    
     else:
         return redirect(url_for('admin_login'))
 
@@ -135,6 +160,15 @@ def my_post():
     else:
         global positive
         positive += 1
+
+    try:
+        review_collection.insert_one({
+            "review": str(text),
+            "prediction": prediction
+        })
+        logging.info("Review and prediction saved to the database")
+    except Exception as e:
+        logging.error(f"Error saving review and prediction to the database: {e}")
     
     reviews.insert(0, text)
     return redirect(request.url)
