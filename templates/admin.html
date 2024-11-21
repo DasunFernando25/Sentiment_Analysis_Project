@@ -25,7 +25,12 @@
     <!-- Main Content -->
     <div class="content">
         <header>
-            <h1>Admin Dashboard</h1>
+            <div class="header-left">
+                <h1>Admin Dashboard</h1>
+            </div>
+            <div class="header-right">
+                <p>Admin: {{ username }}</p>
+            </div>
         </header>
 
         <section class="stats">
@@ -41,6 +46,15 @@
                 <h3>Negatives</h3>
                 <p>{{ negative_reviews  }}</p>
             </div>
+        </section>
+
+        <section class="pie-chart">
+            <h2>Review Sentiment Distribution</h2>
+            {% if plot_path %}
+                <img src="{{ url_for('static', filename='products/review_pie_chart.png') }}" alt="Sentiment Analysis Pie Chart">
+            {% else %}
+                <p>No data available for plotting.</p>
+            {% endif %}
         </section>
 
         <section class="recent-activity">

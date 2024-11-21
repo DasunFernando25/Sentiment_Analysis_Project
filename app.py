@@ -5,6 +5,7 @@ from pymongo import MongoClient
 import bcrypt
 import os
 from dotenv import load_dotenv
+import matplotlib.pyplot as plt
 
 
 app = Flask(__name__)
@@ -68,6 +69,8 @@ def admin_login():
 def admin_dashboard():
     if 'username' in session:
 
+        username = session.get('username')
+
         # Fetch all reviews from MongoDB
         try:
             reviews = list(review_collection.find())
@@ -86,11 +89,42 @@ def admin_dashboard():
             positive_reviews = 0
             negative_reviews = 0
 
-        return render_template('admin.html', 
+        # Calculate percestages
+        if total_reviews > 0:
+            positive_percentage = (positive_reviews / total_reviews) * 100
+            negative_percentage = (negative_reviews / total_reviews) * 100
+        else:
+            positive_percentage = 0
+            negative_percentage = 0
+
+        try:
+            # Generate Pie Chart
+            labels = ['Positive', 'Negative']
+            sizes = [positive_reviews, negative_reviews]
+            colors = ['#4CAF50', '#FF5733']
+            explode = (0.1, 0)  # Highlight the first slice (Positive)
+
+            plt.figure(figsize=(6, 6))
+            plt.pie(sizes, explode=explode, labels=labels, colors=colors, autopct='%1.1f%%', startangle=90)
+            plt.title('Review Sentiment Distribution')
+
+            # Save pie chart to static directory
+            plot_path = os.path.join("static", "products/review_pie_chart.png")
+            plt.savefig(plot_path)
+            plt.close()  # Close the figure to release memory
+        except Exception as e:
+            plot_path = None
+
+
+        return render_template('admin.html',
+                               username=username, 
                                reviews=reviews,
                                total_reviews=total_reviews,
                                positive_reviews=positive_reviews,
-                               negative_reviews=negative_reviews)
+                               negative_reviews=negative_reviews,
+                               positive_percentage=positive_percentage,
+                               negative_percentage=negative_percentage,
+                               plot_path=plot_path)
     
     else:
         return redirect(url_for('admin_login'))

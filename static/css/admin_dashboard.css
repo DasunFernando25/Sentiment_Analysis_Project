@@ -59,8 +59,24 @@ body, html {
     overflow-y: auto;
 }
 
-header h1 {
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: #f4f4f4;
+    border-bottom: 2px solid #ddd;
+}
+
+.header-left h1 {
+    margin: 0;
     font-size: 32px;
+}
+
+.header-right p {
+    margin: 0;
+    font-size: 18px;
+    font-weight: bold;
     color: #333;
 }
 
@@ -90,6 +106,25 @@ header h1 {
     color: #333;
 }
 
+/* Pie Chart Section */
+.pie-chart {
+    margin-top: 40px;
+    text-align: center;
+}
+
+.pie-chart h2 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.pie-chart img {
+    max-width: 60%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
 /* Recent Activity Section */
 .recent-activity {
     margin-top: 30px;
@@ -115,3 +150,4 @@ table th, table td {
 table th {
     background-color: #f4f4f4;
 }
+
