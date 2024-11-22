@@ -9,47 +9,73 @@
 </head>
 <body>
 
-
-    <div class="split left">
-        <div class="centered">
-            <img src="../static/products/Apple-iPhone-15.jpg" alt="">
-        </div>
+    <!-- Admin Link -->
+    <div id="admin-section">
+        <a href="{{ url_for('admin') }}" class="btn btn-sm btn-outline-secondary">
+            <i class="fas fa-user-shield"></i> Admin
+        </a>
     </div>
 
 
-    <div class="split right">
-        <div class="container mt-5 mb-5">
-            <div class="d-flex justify-content-center row">
-                <div class="d-flex flex-column col-md-8">
-                    <p><a href="{{ url_for('admin') }}">Admin</a></p>
-                    <div>
-                        <label for="">Positive Sentiments : {{ data.positive }}</label>
+    <div class="container mt-5">
+        <div class="row">
+            <!-- Product Section -->
+            <div class="col-md-6">
+                <div class="card">
+                    <img src="../static/products/Apple-iPhone-15.jpg" class="card-img-top" alt="Apple iPhone 15">
+                    <div class="card-body">
+                        <h5 class="card-title">Apple iPhone 15</h5>
+                        <p class="card-text">Experience the latest technology with the Apple iPhone 15. Exceptional camera, sleek design, and groundbreaking performance.</p>
+                        <a href="#" class="btn btn-primary">Add to Cart</a>
+                        <a href="#" class="btn btn-outline-secondary">Buy Now</a>
                     </div>
-                    <div>
-                        <label for="">Negative Sentiments : {{ data.negative }}</label>
-                    </div>
-                    <div>
-                        <form method="post">
-                          <textarea name="text"></textarea>
-                          <input type="submit">
-                        </form>
-                    </div>
+                </div>
+            </div>
 
-                    <div class="coment-bottom bg-white p-2 px-4">
-                        {% for review in data.reviews %}
-                        <hr/>
-                          <div
-                              class="commented-section mt-2">
-                              <div class="d-flex flex-row align-items-center commented-user">
-                                  </div>
-                                  <div class="text-nowrap bd-highlight"><span>{{ review }}</span></div>
-                                  <hr/>
-                        {% endfor %}
-                      </div>
+            <!-- Review and Sentiment Section -->
+            <div class="col-md-6">
+                <div class="mb-4">
+                    <div>
+                        <label><strong>Positive Reviews:</strong> {{ data.positive }}</label>
+                    </div>
+                    <div>
+                        <label><strong>Negative Reviews:</strong> {{ data.negative }}</label>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <h5>Submit a Review</h5>
+                    <form method="post">
+                        <div class="form-group">
+                            <textarea class="form-control" name="text" rows="3" placeholder="Write your review here..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-success">Submit Review</button>
+                    </form>
+                </div>
+
+                <div class="bg-light p-3 rounded">
+                    <h5>Customer Reviews</h5>
+                    {% for review in data.reviews %}
+                    <hr>
+                    <div class="commented-section mt-2">
+                        <div class="text-wrap">
+                            <p>{{ review }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center p-3 mt-5">
+        <p>&copy; 2024 PhonesLK. All Rights Reserved.</p>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 
 </body>
 </html>
