@@ -8,12 +8,29 @@
 </head>
 <body id="body">
     <div id="form-container">
+
+        <h2 id="form-heading">Register</h2>
+
+        <!-- Display flash messages in the form -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div id="{{ category }}-message" class="flash-message">
+                        {{ message }} <!-- Display the error message here -->
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
         <form id="register-form" action="{{ url_for('admin_register') }}" method="POST">
             <label id="username-label" for="username">Username</label>
             <input id="username" type="text" name="username" required><br><br>
 
             <label id="password-label" for="password">Password</label>
             <input id="password" type="password" name="password" required><br><br>
+
+            <label id="confirm-password-label" for="confirm_password">Confirm Password</label>
+            <input id="confirm_password" type="password" name="confirm_password" required><br><br>
 
             <button id="submit-button" type="submit">Register</button>
         </form>

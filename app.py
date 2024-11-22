@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 from prediction_pipeline import preprocessing, vectorizer, get_prediction
 from logger import logging
 from pymongo import MongoClient
@@ -58,9 +58,9 @@ def admin_login():
                 session['username'] = username
                 return redirect(url_for('admin_dashboard'))
             else:
-                return "Incorrect username or password"
+                flash("Incorrect username or password", 'error')
         else:
-            return "User does not exist"
+            flash("User does not exist", 'error')
     
     return render_template('admin_login.html')
 
@@ -141,14 +141,22 @@ def admin_register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        confirm_password = request.form['confirm_password']
+
+        if password != confirm_password:
+            flash("Passwords do not match!", 'error') 
+            return render_template('admin_register.html')
+
         hashed_pw = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
         # Check if username already exists
         if collection.find_one({'username': username}):
-            return "Username already taken!"
+            flash("Username already taken!", 'error')
+            return render_template('admin_register.html')
 
         # Insert user into MongoDB
         collection.insert_one({'username': username, 'password': hashed_pw})
+        flash("Registration successful! You can now log in.", 'success')
         return redirect(url_for('admin_login'))
 
     return render_template('admin_register.html')
